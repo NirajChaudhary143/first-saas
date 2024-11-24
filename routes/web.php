@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Feature1Controller;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -24,4 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::get('/feature1',[Feature1Controller::class,'index'])->name('feature1.index');
 require __DIR__.'/auth.php';
