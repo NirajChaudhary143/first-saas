@@ -1,3 +1,4 @@
+import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
@@ -7,6 +8,7 @@ import { Head, useForm, usePage } from "@inertiajs/react";
 export default function Feature1({ feature1, answer }) {
     const { auth } = usePage().props;
 
+    const availableCredits = auth.user.available_credits;
     const { data, setData, post, processing, errors, reset } = useForm({
         first_value: "",
         second_value: "",
@@ -14,6 +16,10 @@ export default function Feature1({ feature1, answer }) {
 
     const submitForm = (e) => {
         e.preventDefault();
+
+        post(route("feature1.addition"), {
+            onSuccess: () => reset(),
+        });
     };
     return (
         <AuthenticatedLayout
@@ -29,6 +35,15 @@ export default function Feature1({ feature1, answer }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
+                            {answer !== null && (
+                                <div>Result of calculation : {answer}</div>
+                            )}
+                            {availableCredits === 0 && (
+                                <div>
+                                    You do not have enough credits to use this
+                                    feature.
+                                </div>
+                            )}
                             <form
                                 onSubmit={submitForm}
                                 className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md space-y-6"
@@ -63,6 +78,7 @@ export default function Feature1({ feature1, answer }) {
                                             )
                                         }
                                     />
+                                    <InputError message={errors.first_value} />
                                 </div>
 
                                 <div className="mb-6">
@@ -84,19 +100,15 @@ export default function Feature1({ feature1, answer }) {
                                             )
                                         }
                                     />
+                                    <InputError message={errors.second_value} />
                                 </div>
 
                                 <div>
-                                    <PrimaryButton
-                                        type="submit"
+                                    <input
                                         className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                        disabled={
-                                            !data.first_value ||
-                                            !data.second_value
-                                        } // Disables button if any value is missing
-                                    >
-                                        Addition
-                                    </PrimaryButton>
+                                        type="submit"
+                                        value="Addition"
+                                    />
                                 </div>
                             </form>
                         </div>

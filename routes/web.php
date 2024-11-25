@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Feature1Controller;
 use App\Http\Controllers\ProfileController;
+use App\Models\Feature;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -27,4 +28,5 @@ Route::middleware('auth')->group(function () {
 
 
 Route::get('/feature1',[Feature1Controller::class,'index'])->name('feature1.index');
+Route::post('/addition',[Feature1Controller::class,'calculate'])->name('feature1.addition');
 require __DIR__.'/auth.php';
