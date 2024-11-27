@@ -46,13 +46,27 @@ export default function AuthenticatedLayout({ header, children }) {
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="flex items-center bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
-                                <img
-                                    className="w-6"
-                                    src="https://img.icons8.com/?size=100&id=OFHwDWASQWmX&format=png&color=000000"
-                                />
-                                {user.available_credits} Credits
+                            <div className="flex items-center justify-between bg-white px-4 py-3 text-sm font-medium text-gray-500 transition duration-150 ease-in-out rounded-lg shadow-md hover:text-gray-700 hover:shadow-lg focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
+                                {/* Icon and Credits */}
+                                <div className="flex items-center gap-2">
+                                    <img
+                                        className="w-6"
+                                        src="https://img.icons8.com/?size=100&id=OFHwDWASQWmX&format=png&color=000000"
+                                        alt="Credits Icon"
+                                    />
+                                    <span className="text-gray-600 dark:text-gray-200">
+                                        {user.available_credits} Credits
+                                    </span>
+                                </div>
+
+                                <a
+                                    className="ml-4 px-3 py-1.5 bg-blue-500 text-white text-sm font-semibold rounded-lg transition duration-150 ease-in-out hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-500"
+                                    href={route("purchase")}
+                                >
+                                    Get More
+                                </a>
                             </div>
+
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>

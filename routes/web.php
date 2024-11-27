@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Feature1Controller;
 use App\Http\Controllers\Feature2Controller;
+use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 use App\Models\Feature;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -33,4 +35,6 @@ Route::post('/addition',[Feature1Controller::class,'calculate'])->name('feature1
 
 Route::get('/feature2',[Feature2Controller::class,'index'])->name('feature2.index');
 Route::post('/subs',[Feature2Controller::class,'calculate'])->name('feature2.substraction');
+
+Route::get('/purchase',[PackageController::class,'index'])->name('purchase');
 require __DIR__.'/auth.php';
