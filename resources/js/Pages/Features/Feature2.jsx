@@ -4,10 +4,10 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 
-export default function Feature1({ feature1, answer }) {
+export default function Feature2({ feature2, answer }) {
     const { auth } = usePage().props;
+    const available_credits = auth.user.available_credits;
 
-    const availableCredits = auth.user.available_credits;
     const { data, setData, post, processing, errors, reset } = useForm({
         first_value: "",
         second_value: "",
@@ -16,7 +16,7 @@ export default function Feature1({ feature1, answer }) {
     const submitForm = (e) => {
         e.preventDefault();
 
-        post(route("feature1.addition"), {
+        post(route("feature2.substraction"), {
             onSuccess: () => reset(),
         });
     };
@@ -24,7 +24,7 @@ export default function Feature1({ feature1, answer }) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Feature
+                    Feature 2
                 </h2>
             }
         >
@@ -37,27 +37,24 @@ export default function Feature1({ feature1, answer }) {
                             {answer !== null && (
                                 <div>Result of calculation : {answer}</div>
                             )}
-                            {(availableCredits === 0 ||
-                                availableCredits <
-                                    feature1.required_credits) && (
-                                <div>
-                                    You do not have enough credits to use this
-                                    feature.
-                                </div>
-                            )}
+                            {(available_credits == 0 ||
+                                available_credits <
+                                    feature2.required_credits) &&
+                                "You do not have enough credits to use this feature."}
+
                             <form
                                 onSubmit={submitForm}
                                 className="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md space-y-6"
                             >
                                 <h2 className="text-2xl font-semibold text-gray-800">
-                                    {feature1.name}{" "}
+                                    {feature2.name}{" "}
                                     <span className="text-sm text-gray-500">
-                                        ({feature1.required_credits} credits
+                                        ({feature2.required_credits} credits
                                         required)
                                     </span>
                                 </h2>
                                 <p className="text-sm text-gray-600 mb-6">
-                                    {feature1.description}
+                                    {feature2.description}
                                 </p>
 
                                 <div className="mb-6">
@@ -108,7 +105,7 @@ export default function Feature1({ feature1, answer }) {
                                     <input
                                         className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                                         type="submit"
-                                        value="Addition"
+                                        value="Substraction"
                                     />
                                 </div>
                             </form>

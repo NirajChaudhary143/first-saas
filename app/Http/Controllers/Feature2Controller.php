@@ -1,0 +1,60 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Resources\FeatureResource;
+use App\Models\Feature;
+use App\Models\UsedFeature;
+use Illuminate\Http\Request;
+
+class Feature2Controller extends Controller
+{
+    public ?Feature $feature = null;
+
+	public function __construct()
+	{
+		try {
+			$this->feature = Feature::where('route_name','feature2.index')
+									->where('active', true)
+									->firstOrFail();
+		} catch (ModelNotFoundException $e) {
+            abort(404, 'Feature not found');
+        }
+	}
+
+	public function index(){
+		return inertia('Features/Feature2', [
+			'feature2' => new FeatureResource($this->feature),
+			'answer' => session('answer')
+		]);
+	}
+
+	public function calculate(Request $request){
+		$user = $request->user();
+
+		$validate = $request->validate([
+			'first_value' => 'required|numeric',
+			'second_value' => 'required|numeric'
+		]);
+
+		if ($user['available_credits'] < $this->feature['required_credits']) {
+			return back();
+		}
+
+
+		$first_value = $request->input('first_value');
+		$second_value = $request->input('second_value');
+
+		$user->decreaseCredits($this->feature['required_credits']);
+
+		UsedFeature::create([
+			'credits' => $this->feature['required_credits'],
+			'feature_id' => $this->feature['id'],
+			'user_id' => $user['id'],
+			'data' => json_encode(array('first_value' => $first_value, 'second_value' => $second_value))
+		]);
+		$substraction = $first_value - $second_value;
+
+		return to_route('feature2.index')->with('answer',$substraction);
+	}
+}

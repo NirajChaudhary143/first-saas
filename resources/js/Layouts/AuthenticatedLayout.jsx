@@ -36,11 +36,23 @@ export default function AuthenticatedLayout({ header, children }) {
                                 >
                                     Feature1
                                 </NavLink>
+                                <NavLink
+                                    href={route("feature2.index")}
+                                    active={route().current("feature2.index")}
+                                >
+                                    Feature2
+                                </NavLink>
                             </div>
                         </div>
 
                         <div className="hidden sm:ms-6 sm:flex sm:items-center">
-                            <div className="flex items-center bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"><img className="w-6" src="https://img.icons8.com/?size=100&id=OFHwDWASQWmX&format=png&color=000000"/>{user.available_credits} Credits</div>
+                            <div className="flex items-center bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300">
+                                <img
+                                    className="w-6"
+                                    src="https://img.icons8.com/?size=100&id=OFHwDWASQWmX&format=png&color=000000"
+                                />
+                                {user.available_credits} Credits
+                            </div>
                             <div className="relative ms-3">
                                 <Dropdown>
                                     <Dropdown.Trigger>

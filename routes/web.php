@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Feature1Controller;
+use App\Http\Controllers\Feature2Controller;
 use App\Http\Controllers\ProfileController;
 use App\Models\Feature;
 use Illuminate\Foundation\Application;
@@ -29,4 +30,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/feature1',[Feature1Controller::class,'index'])->name('feature1.index');
 Route::post('/addition',[Feature1Controller::class,'calculate'])->name('feature1.addition');
+
+Route::get('/feature2',[Feature2Controller::class,'index'])->name('feature2.index');
+Route::post('/subs',[Feature2Controller::class,'calculate'])->name('feature2.substraction');
 require __DIR__.'/auth.php';
