@@ -1,11 +1,10 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
-import { stringify } from "postcss";
 
 export default function Packages({ packages }) {
+    const { csrf_token } = usePage().props;
+
     return (
         <AuthenticatedLayout
             header={
@@ -32,7 +31,7 @@ export default function Packages({ packages }) {
                                         <p className="text-lg font-medium text-gray-800 dark:text-gray-300">
                                             Price:{" "}
                                             <span className="font-semibold text-indigo-600">
-                                                ${pkg.price}
+                                                Rs. {pkg.price}
                                             </span>
                                         </p>
                                         <p className="text-lg font-medium text-gray-800 dark:text-gray-300">
@@ -42,16 +41,23 @@ export default function Packages({ packages }) {
                                             </span>
                                         </p>
                                         <div className="mt-4">
-                                            <button
-                                                onClick={() =>
-                                                    alert(
-                                                        `Purchased ${pkg.name} package!`
-                                                    )
-                                                }
-                                                className="w-full sm:w-auto mt-4 inline-block rounded-lg bg-indigo-600 text-white font-semibold py-2 px-4 shadow-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300"
+                                            <form
+                                                action={route(
+                                                    "purchase.package",
+                                                    pkg
+                                                )}
+                                                method="post"
                                             >
-                                                Buy Now
-                                            </button>
+                                                <TextInput
+                                                    type="hidden"
+                                                    name="_token"
+                                                    autoComplete="off"
+                                                    value={csrf_token}
+                                                />
+                                                <button className="w-full sm:w-auto mt-4 inline-block rounded-lg bg-indigo-600 text-white font-semibold py-2 px-4 shadow-md hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-300">
+                                                    Buy Now
+                                                </button>
+                                            </form>
                                         </div>
                                     </div>
                                 ))}

@@ -6,6 +6,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
 use App\Models\Feature;
+use App\Models\Transaction;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,4 +38,5 @@ Route::get('/feature2',[Feature2Controller::class,'index'])->name('feature2.inde
 Route::post('/subs',[Feature2Controller::class,'calculate'])->name('feature2.substraction');
 
 Route::get('/purchase',[PackageController::class,'index'])->name('purchase');
+Route::post('/upgrade/{package}',[TransactionController::class,'purchase'])->name('purchase.package');
 require __DIR__.'/auth.php';
