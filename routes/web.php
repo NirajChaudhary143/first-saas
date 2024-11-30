@@ -39,4 +39,6 @@ Route::post('/subs',[Feature2Controller::class,'calculate'])->name('feature2.sub
 
 Route::get('/purchase',[PackageController::class,'index'])->name('purchase');
 Route::post('/upgrade/{package}',[TransactionController::class,'purchase'])->name('purchase.package');
+Route::get('/success', [TransactionController::class,'success'])->name('purchase.success');
+Route::get('/failed', [TransactionController::class,'failed'])->name('purchase.failed');
 require __DIR__.'/auth.php';

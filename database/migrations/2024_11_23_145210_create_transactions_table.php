@@ -18,7 +18,8 @@ return new class extends Migration
 			$table->integer('credits');
 			$table->string('session_id');
 			$table->foreignId('user_id')->constrained('users');
-			$table->foreignId('package_id')->constrained('packages');
+			$table->string('package_id');
+			$table->foreign('package_id')->references('package_id')->on('packages');
             $table->timestamps();
         });
     }

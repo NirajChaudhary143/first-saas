@@ -16,10 +16,10 @@ class Transaction extends Model
 	];
 
 	public function user(){
-		$this->belongsTo(User::class);
+    	return $this->belongsTo(User::class, 'user_id', 'id');
 	}
 
 	public function package(){
-		$this->belongsTo(Package::class);
+		return $this->belongsTo(Package::class,'package_id','package_id');
 	}
 }
