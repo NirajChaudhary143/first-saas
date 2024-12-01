@@ -23,6 +23,7 @@ class TransactionController extends Controller
 			'failure_url' => $failureUrl,
 		]);
 	}
+	
 	public function purchase(Package $package){
 
 		Transaction::create([

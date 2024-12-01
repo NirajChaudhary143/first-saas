@@ -2,7 +2,7 @@ import TextInput from "@/Components/TextInput";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, useForm, usePage } from "@inertiajs/react";
 
-export default function Packages({ packages }) {
+export default function Packages({ packages, redirected, message }) {
     const { csrf_token } = usePage().props;
 
     return (
@@ -19,6 +19,13 @@ export default function Packages({ packages }) {
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
                         <div className="p-6 text-gray-900 dark:text-gray-100">
+                            {redirected && (
+                                <div className="p-6">
+                                    <div className="bg-yellow-100 text-yellow-800 px-4 py-3 rounded-lg">
+                                        {message}
+                                    </div>
+                                </div>
+                            )}
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {packages.map((pkg) => (
                                     <div

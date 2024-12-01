@@ -28,17 +28,32 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+	Route::name('feature1.')->controller(Feature1Controller::class)->group(function () {
+		Route::get('/feature1', 'index')->name('index');
+		Route::post('/addition', 'calculate')->name('addition');
+	});
+
+	// Feature2Controller routes
+	Route::name('feature2.')->controller(Feature2Controller::class)->group(function () {
+		Route::get('/feature2', 'index')->name('index');
+		Route::post('/subs', 'calculate')->name('substraction');
+	});
+
+	// PackageController routes
+	Route::controller(PackageController::class)->group(function () {
+		Route::get('/purchase', 'index')->name('purchase');
+	});
+
+	// TransactionController routes
+	Route::name('purchase.')->controller(TransactionController::class)->group(function () {
+		Route::post('/upgrade/{package}', 'purchase')->name('package');
+		Route::get('/success', 'success')->name('success');
+		Route::get('/failed', 'failed')->name('failed');
+	});
+
+
 });
 
 
-Route::get('/feature1',[Feature1Controller::class,'index'])->name('feature1.index');
-Route::post('/addition',[Feature1Controller::class,'calculate'])->name('feature1.addition');
-
-Route::get('/feature2',[Feature2Controller::class,'index'])->name('feature2.index');
-Route::post('/subs',[Feature2Controller::class,'calculate'])->name('feature2.substraction');
-
-Route::get('/purchase',[PackageController::class,'index'])->name('purchase');
-Route::post('/upgrade/{package}',[TransactionController::class,'purchase'])->name('purchase.package');
-Route::get('/success', [TransactionController::class,'success'])->name('purchase.success');
-Route::get('/failed', [TransactionController::class,'failed'])->name('purchase.failed');
 require __DIR__.'/auth.php';

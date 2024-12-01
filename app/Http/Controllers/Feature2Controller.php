@@ -32,15 +32,17 @@ class Feature2Controller extends Controller
 	public function calculate(Request $request){
 		$user = $request->user();
 
+		if ($user['available_credits'] < $this->feature['required_credits']) {
+			return to_route('purchase')->with([
+				'redirected' => true,
+				'message' => 'You are out of credits. Please purchase more credits from the available packages below.'
+			]);
+		}
+
 		$validate = $request->validate([
 			'first_value' => 'required|numeric',
 			'second_value' => 'required|numeric'
 		]);
-
-		if ($user['available_credits'] < $this->feature['required_credits']) {
-			return back();
-		}
-
 
 		$first_value = $request->input('first_value');
 		$second_value = $request->input('second_value');

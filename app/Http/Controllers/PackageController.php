@@ -7,10 +7,12 @@ use Illuminate\Http\Request;
 
 class PackageController extends Controller
 {
-	// public ?Package $package = null;
-
     public function index(){
 		$package = Package::all();
-		return inertia('Upgrade/Package', ['packages' => $package]);
+		return inertia('Upgrade/Package', [
+							'packages' => $package,
+							'redirected' => session('redirected'),
+							'message' => session('message')
+						]);
 	}
 }
