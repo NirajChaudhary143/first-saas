@@ -5,8 +5,10 @@ use App\Http\Controllers\Feature2Controller;
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Resources\UsedFeatureResource;
 use App\Models\Feature;
 use App\Models\Transaction;
+use App\Models\UsedFeature;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,7 +23,18 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+	$user_id = auth()->user()->id;
+
+	$used_features = UsedFeature::query()
+		->with(['feature'])
+		->where('user_id', $user_id)
+		->latest()
+		->paginate();
+
+	return Inertia::render('Dashboard', [
+		'used_feature' => UsedFeatureResource::collection($used_features), 
+	]);
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -51,8 +64,6 @@ Route::middleware('auth')->group(function () {
 		Route::get('/success', 'success')->name('success');
 		Route::get('/failed', 'failed')->name('failed');
 	});
-
-
 });
 
 

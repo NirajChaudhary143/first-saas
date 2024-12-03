@@ -56,7 +56,7 @@ export default function Feature1({ feature1, answer }) {
                                 {/* Insufficient Credits Warning */}
                                 {(availableCredits === 0 ||
                                     availableCredits <
-                                        feature2.required_credits) && (
+                                        feature1.required_credits) && (
                                     <div className="bg-red-100 text-red-800 px-4 py-3 rounded-lg text-center">
                                         <p>
                                             You do not have enough credits to

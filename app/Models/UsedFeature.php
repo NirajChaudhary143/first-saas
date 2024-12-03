@@ -9,7 +9,8 @@ class UsedFeature extends Model
     protected $fillable = [
 		'credits',
 		'feature_id',
-		'user_id'
+		'user_id',
+		'data'
 	];
 
 	protected function casts(): array {
