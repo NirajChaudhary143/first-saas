@@ -23,19 +23,57 @@ class TransactionController extends Controller
 			'failure_url' => $failureUrl,
 		]);
 	}
-	
-	public function purchase(Package $package){
 
-		Transaction::create([
-			'package_id' => $package->package_id,
-			'user_id' => Auth::user()->id,
-			'price' => $package->price,
-			'status' => 'Pending',
-			'credits' => $package->credits,
-			'session_id' => '123'
-		]);
+	public function purchase(Request $request,Package $package){
+		switch ( $request->payment_method ) {
+			case 'esewa':
+				Transaction::create([
+					'package_id' => $package->package_id,
+					'user_id' => Auth::user()->id,
+					'price' => $package->price,
+					'status' => 'Pending',
+					'credits' => $package->credits,
+					'session_id' => '123'
+				]);
+				$this->esewa->payment($package->package_id, $package->price, 0, 0.0, 0.0 );
+				break;
 
-		$this->esewa->payment($package->package_id, $package->price, 0, 0.0, 0.0 );
+				case 'stripe':
+					$stripe = new \Stripe\StripeClient( env( 'STRIPE_SECRET_KEY' ) );
+
+					$checkout_session = $stripe->checkout->sessions->create([
+						'success_url' => 'https://example.com/success',
+						'cancel_url' => 'https://example.com/cancel',
+						'line_items' => [
+							[
+								'price_data' => [
+									'currency' => 'usd',
+									'product_data' => [
+										'name' => $package->name,
+									],
+									'unit_amount' => $package->price * 100,
+								],
+								'quantity' => 1,
+							],
+						],
+						'mode' => 'payment',
+					]);
+
+
+					Transaction::create([
+						'package_id' => $package->package_id,
+						'user_id' => Auth::user()->id,
+						'price' => $package->price,
+						'status' => 'Pending',
+						'credits' => $package->credits,
+						'session_id' => $checkout_session->id
+					]);
+				return redirect($checkout_session->url);
+				break;
+			default:
+				# code...
+				break;
+		}
 	}
 
 	public function success(){
