@@ -42,8 +42,8 @@ class TransactionController extends Controller
 					$stripe = new \Stripe\StripeClient( env( 'STRIPE_SECRET_KEY' ) );
 
 					$checkout_session = $stripe->checkout->sessions->create([
-						'success_url' => 'https://example.com/success',
-						'cancel_url' => 'https://example.com/cancel',
+						'success_url' => route('stripe.success'),
+						'cancel_url' => route('stripe.cancel'),
 						'line_items' => [
 							[
 								'price_data' => [
