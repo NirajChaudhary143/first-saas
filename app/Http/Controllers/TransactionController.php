@@ -14,8 +14,8 @@ class TransactionController extends Controller
 	protected $esewa = "";
 
 	public function __construct(){
-		$successUrl = route('purchase.success');
-		$failureUrl = route('purchase.failed');
+		$successUrl = route('purchase.success', ['from', 'esewa']);
+		$failureUrl = route('purchase.failed', ['from', 'esewa']);
 
 		$this->esewa = new Client([
 			'merchant_code' => 'EPAYTEST',
@@ -42,8 +42,8 @@ class TransactionController extends Controller
 					$stripe = new \Stripe\StripeClient( env( 'STRIPE_SECRET_KEY' ) );
 
 					$checkout_session = $stripe->checkout->sessions->create([
-						'success_url' => route('stripe.success'),
-						'cancel_url' => route('stripe.cancel'),
+					'success_url' => route('purchase.success', ['from' => 'stripe']),
+					'cancel_url' => route('purchase.failed', ['from' => 'stripe']),
 						'line_items' => [
 							[
 								'price_data' => [
@@ -77,32 +77,49 @@ class TransactionController extends Controller
 	}
 
 	public function success(){
-		$order_id = $_GET['oid'];
-		$amount = $_GET['amt'];
-		$refference_id = $_GET['refId'];
+		$payment_source = isset( $_GET['from'] ) ? $_GET['from'] : '';
 
-		$status = $this->esewa->verifyPayment( $refference_id, $order_id, $amount);
-		if ($status) {
-			$transaction = Transaction::where('package_id', $order_id)->firstOrFail();
-			$transaction->status = "Success";
-			$transaction->save();
+		if( empty( $payment_source ) ){
+			return;
+		}
+		switch ($payment_source) {
+			case 'esewa':
+				$order_id = $_GET['oid'];
+				$amount = $_GET['amt'];
+				$refference_id = $_GET['refId'];
 
-			$user = $transaction->user;
+				$status = $this->esewa->verifyPayment( $refference_id, $order_id, $amount);
+				if ($status) {
+					$transaction = Transaction::where('package_id', $order_id)->firstOrFail();
+					$transaction->status = "Success";
+					$transaction->save();
 
-			$user->available_credits += $transaction->credits;
-			$user->save();
+					$user = $transaction->user;
 
-			dd('Success');
+					$user->available_credits += $transaction->credits;
+					$user->save();
+
+					return inertia('Success',['source' =>ucfirst($payment_source)]);
+				}
+				break;
+
+			case 'stripe':
+				return inertia('Success',['source' => ucfirst($payment_source)]);
+
+				break;
+			default:
+				# code...
+				break;
 		}
 	}
 
 	public function failed(){
-		$order_id = $_GET['pid'];
+		$payment_source = isset( $_GET['from'] ) ? sanitize_text_field( $_GET['from'] ) : '';
 
-		$transaction = Transaction::where('package_id', $order_id)->firstOrFail();
-		$transaction->status = "Failed";
-		$transaction->save();
-		dd('failed');
+		if( empty( $payment_source ) ){
+			return;
+		}
 
+		dd($_GET);
 	}
 }
