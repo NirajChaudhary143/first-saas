@@ -14,8 +14,8 @@ class TransactionController extends Controller
 	protected $esewa = "";
 
 	public function __construct(){
-		$successUrl = route('purchase.success', ['from', 'esewa']);
-		$failureUrl = route('purchase.failed', ['from', 'esewa']);
+		$successUrl = route('purchase.success', ['from'=>'esewa']);
+		$failureUrl = route('purchase.failed', ['from' => 'esewa']);
 
 		$this->esewa = new Client([
 			'merchant_code' => 'EPAYTEST',
@@ -114,12 +114,12 @@ class TransactionController extends Controller
 	}
 
 	public function failed(){
-		$payment_source = isset( $_GET['from'] ) ? sanitize_text_field( $_GET['from'] ) : '';
+		$payment_source = isset( $_GET['from'] ) ? $_GET['from'] : '';
 
 		if( empty( $payment_source ) ){
 			return;
 		}
 
-		dd($_GET);
+		return inertia('Failed',['source' => $payment_source]);
 	}
 }
