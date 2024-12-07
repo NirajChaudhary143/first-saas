@@ -32,7 +32,7 @@ Route::get('/dashboard', function () {
 		->paginate();
 
 	return Inertia::render('Dashboard', [
-		'used_feature' => UsedFeatureResource::collection($used_features), 
+		'used_feature' => UsedFeatureResource::collection($used_features),
 	]);
 
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -64,6 +64,8 @@ Route::middleware('auth')->group(function () {
 		Route::get('/success', 'success')->name('success');
 		Route::get('/failed', 'failed')->name('failed');
 	});
+
+	Route::get('stripe-webhook', [TransactionController::class, 'webhook'])->name('stripe.webhook');
 });
 
 

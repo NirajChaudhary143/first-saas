@@ -122,4 +122,32 @@ class TransactionController extends Controller
 
 		return inertia('Failed',['source' => $payment_source]);
 	}
+
+	public function webhook(){
+		$payload = @file_get_contents('php://input');
+		$event = null;
+
+		try {
+			$event = \Stripe\Event::constructFrom(
+				json_decode($payload, true)
+			);
+		} catch(\UnexpectedValueException $e) {
+			http_response_code(400);
+			exit();
+		}
+
+		switch ($event->type) {
+			case 'payment_intent.succeeded':
+				$paymentIntent = $event->data->object;
+				break;
+			case 'payment_method.attached':
+				$paymentMethod = $event->data->object;
+				break;
+			default:
+				echo 'Received unknown event type ' . $event->type;
+		}
+
+		dd($paymentIntent);
+		http_response_code(200);
+	}
 }
