@@ -6,6 +6,7 @@ use App\Models\Package;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use RemoteMerge\Esewa\Client;
 
 class TransactionController extends Controller
@@ -123,31 +124,53 @@ class TransactionController extends Controller
 		return inertia('Failed',['source' => $payment_source]);
 	}
 
-	public function webhook(){
+	public function webhook(Request $request){
+		Log::info('Webhook');
+		Log::info($request)
+;		// Set your secret key. Remember to switch to your live secret key in production.
+		// See your keys here: https://dashboard.stripe.com/apikeys
+		\Stripe\Stripe::setApiKey(env( 'STRIPE_SECRET_KEY' ));
+
+		// If you are testing your webhook locally with the Stripe CLI you
+		// can find the endpoint's secret by running `stripe listen`
+		// Otherwise, find your endpoint's secret in your webhook settings in the Developer Dashboard
+		$endpoint_secret = env( 'WEBHOOK_SECRET_KEY' );
+
 		$payload = @file_get_contents('php://input');
+		$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 		$event = null;
 
 		try {
-			$event = \Stripe\Event::constructFrom(
-				json_decode($payload, true)
+			$event = \Stripe\Webhook::constructEvent(
+				$payload, $sig_header, $endpoint_secret
 			);
 		} catch(\UnexpectedValueException $e) {
+			// Invalid payload
+		http_response_code(400);
+		echo json_encode(['Error parsing payload: ' => $e->getMessage()]);
+		exit();
+		} catch(\Stripe\Exception\SignatureVerificationException $e) {
+			// Invalid signature
 			http_response_code(400);
+			echo json_encode(['Error verifying webhook signature: ' => $e->getMessage()]);
 			exit();
 		}
 
+		// Handle the event
 		switch ($event->type) {
 			case 'payment_intent.succeeded':
-				$paymentIntent = $event->data->object;
+				$paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
+				handlePaymentIntentSucceeded($paymentIntent);
 				break;
 			case 'payment_method.attached':
-				$paymentMethod = $event->data->object;
+				$paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
+				handlePaymentMethodAttached($paymentMethod);
 				break;
+			// ... handle other event types
 			default:
 				echo 'Received unknown event type ' . $event->type;
 		}
 
-		dd($paymentIntent);
 		http_response_code(200);
 	}
 }

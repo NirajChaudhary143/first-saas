@@ -65,7 +65,7 @@ Route::middleware('auth')->group(function () {
 		Route::get('/failed', 'failed')->name('failed');
 	});
 
-	Route::get('stripe-webhook', [TransactionController::class, 'webhook'])->name('stripe.webhook');
+	Route::post('/stripe-webhook', [TransactionController::class, 'webhook'])->name('stripe.webhook')->withoutMiddleware('auth');
 });
 
 
