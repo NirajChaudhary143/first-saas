@@ -125,10 +125,6 @@ class TransactionController extends Controller
 	}
 
 	public function webhook(Request $request){
-		Log::info('Webhook');
-		Log::info($request)
-;		// Set your secret key. Remember to switch to your live secret key in production.
-		// See your keys here: https://dashboard.stripe.com/apikeys
 		\Stripe\Stripe::setApiKey(env( 'STRIPE_SECRET_KEY' ));
 
 		// If you are testing your webhook locally with the Stripe CLI you
@@ -158,13 +154,18 @@ class TransactionController extends Controller
 
 		// Handle the event
 		switch ($event->type) {
-			case 'payment_intent.succeeded':
-				$paymentIntent = $event->data->object; // contains a \Stripe\PaymentIntent
-				handlePaymentIntentSucceeded($paymentIntent);
-				break;
-			case 'payment_method.attached':
-				$paymentMethod = $event->data->object; // contains a \Stripe\PaymentMethod
-				handlePaymentMethodAttached($paymentMethod);
+			case 'checkout.session.completed':
+				$session = $event->data->object;
+
+				$transaction = Transaction::where('session_id', $session->id)->first();
+
+				if ( $transaction && $transaction->status === "Pending" ) {
+					$transaction->status = "Paid";
+					$transaction->save();
+
+					$transaction->user->available_credits += $transaction->credits;
+					$transaction->user->save();
+				}
 				break;
 			// ... handle other event types
 			default:
